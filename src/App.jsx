@@ -10,7 +10,7 @@ const initialFormat = {
 function computeExp(exponentBits) {
   let result = 0;
   for (let i = 0; i < exponentBits.length; i++) {
-    if (exponentBits[i] == 1)
+    if (exponentBits[i] === 1)
       result += Math.pow(2, exponentBits.length - 1 - i);
   }
   return result;
@@ -19,7 +19,7 @@ function computeExp(exponentBits) {
 function computeFrac(fracBits) {
   let result = 0;
   for (let i = 0; i < fracBits.length; i++) {
-    if (fracBits[i] == 1)
+    if (fracBits[i] === 1)
       result += Math.pow(2, -(i + 1));
   }
   return result;
@@ -39,7 +39,7 @@ function computeFloatingPoint(signBit, exponentBits, fracBits) {
   const exp = computeExp(exponentBits);
 
   let E = exp - bias;
-  if (exp == 0) {
+  if (exp === 0) {
     E = 1 - bias;
     denorm = true;
   }
@@ -48,7 +48,7 @@ function computeFloatingPoint(signBit, exponentBits, fracBits) {
   const frac = computeFrac(fracBits);
   if (isAllOnes(exponentBits)) {
 
-    if (frac != 0)
+    if (frac !== 0)
       return NaN;
 
     if (signBit)
@@ -92,7 +92,7 @@ function getBinaryRep(signBit, exponentBits, fracBits) {
 
 function getEfromExp(exp) {
   for (let i = 0; i < exp.length; i++) {
-    if (exp[i] == 1)
+    if (exp[i] === 1)
       return exp.length - i - 1;
   }
 }
@@ -105,50 +105,50 @@ function App() {
   const [signBit, setSignBit] = useState(0);
   const [value, setValue] = useState(computeFloatingPoint(signBit, exponentBits, fracBits));
 
-  function getBinaryRepFromDecialRep(value) {
-    const sign = !(value - value === 0);
-    const intPart = Math.abs(parseInt(value));
-    const fracPart = Math.abs(value) - intPart;
+  // function getBinaryRepFromDecialRep(value) {
+  //   const sign = !(value - value === 0);
+  //   const intPart = Math.abs(parseInt(value));
+  //   const fracPart = Math.abs(value) - intPart;
 
-    const bias = Math.pow(2, exponentBits.length - 1) - 1;
-    const binFracPart = fracPart.toString(2);
-    const binExpPart = (getEfromExp(intPart.toString(2).split("")) + bias).toString(2);
+  //   const bias = Math.pow(2, exponentBits.length - 1) - 1;
+  //   const binFracPart = fracPart.toString(2);
+  //   const binExpPart = (getEfromExp(intPart.toString(2).split("")) + bias).toString(2);
 
-    const expArr = binExpPart.split("").map((char) => parseInt(char, 2));
+  //   const expArr = binExpPart.split("").map((char) => parseInt(char, 2));
 
-    let fracArr = binFracPart.split("").slice(2)
-    fracArr = intPart.toString(2).split("").slice(1).concat(fracArr)
+  //   let fracArr = binFracPart.split("").slice(2)
+  //   fracArr = intPart.toString(2).split("").slice(1).concat(fracArr)
 
-    if (fracArr.length > fracBits.length) {
-      fracArr.splice(fracBits.length);
-    } else if (fracArr.length < fracBits.length) {
-      const numFillChars = fracBits.length - fracArr.length;
-      const fillArray = new Array(numFillChars).fill("0");
-      fracArr = fracArr.concat(fillArray);
-    }
+  //   if (fracArr.length > fracBits.length) {
+  //     fracArr.splice(fracBits.length);
+  //   } else if (fracArr.length < fracBits.length) {
+  //     const numFillChars = fracBits.length - fracArr.length;
+  //     const fillArray = new Array(numFillChars).fill("0");
+  //     fracArr = fracArr.concat(fillArray);
+  //   }
 
-    fracArr = fracArr.map((char) => parseInt(char, 2));
+  //   fracArr = fracArr.map((char) => parseInt(char, 2));
 
 
-    console.log(getEfromExp(intPart.toString(2).split("")) + bias)
+  //   console.log(getEfromExp(intPart.toString(2).split("")) + bias)
 
-    setExponentBits([...expArr])
-    setFracBits([...fracArr])
-    setSignBit(sign)
+  //   setExponentBits([...expArr])
+  //   setFracBits([...fracArr])
+  //   setSignBit(sign)
 
-  }
+  // }
 
-  const [decimalInput, setDecimalInput] = useState(0)
+  //const [decimalInput, setDecimalInput] = useState(0)
   const decimalInputRef = useRef(null)
 
-  function handleDecimalInput(e) {
-    const value = parseFloat(e.target.value);
-    if (isNaN(value))
-      return;
+  // function handleDecimalInput(e) {
+  //   const value = parseFloat(e.target.value);
+  //   if (isNaN(value))
+  //     return;
     
-    setDecimalInput(value)
-    getBinaryRepFromDecialRep(value)
-  }
+  //   setDecimalInput(value)
+  //   getBinaryRepFromDecialRep(value)
+  // }
 
 
   function setExp(size) {
@@ -176,10 +176,9 @@ function App() {
   }, [exponentBits, fracBits, signBit])
 
   useEffect(() => {
-    if(decimalInputRef.current == document.activeElement)
+    if(decimalInputRef.current === document.activeElement)
       return
 
-    setDecimalInput(value)
   }, [value])
 
   return (
