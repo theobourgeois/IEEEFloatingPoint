@@ -21,8 +21,8 @@ export default function NumInput({value, onChange, min=null, max=null, step=1}) 
     }
 
     return (
-        <div className="flex ml-1">
-            <div className="w-8 bg-white ">{value}</div>
+        <div className="flex ml-1 outline-gray-300 outline outline-1">
+            <div className="w-8 bg-white pl-1">{value}</div>
             <div>
                 <div className="bg-neutral-300 hover:bg-neutral-400" onClick={increment}>
                     <svg className="scale-[0.4]" fill="#2F2F2F" xmlns="http://www.w3.org/2000/svg" width="20.116" height="11.746" viewBox="0 0 20.116 11.746">

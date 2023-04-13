@@ -157,7 +157,6 @@ function App() {
   // }
 
   //const [decimalInput, setDecimalInput] = useState(0)
-  const decimalInputRef = useRef(null)
 
   // function handleDecimalInput(e) {
   //   const value = parseFloat(e.target.value);
@@ -193,18 +192,14 @@ function App() {
     setValue(computeFloatingPoint(signBit, exponentBits, fracBits))
   }, [exponentBits, fracBits, signBit])
 
-  useEffect(() => {
-    if(decimalInputRef.current === document.activeElement)
-      return
-
-  }, [value])
+  
 
   return (
-    <div className="h-screen w-screen flex justify-center items-center">
-      <div className="flex flex-col justify-evenly items-center bg-slate-100 w-2/3 h-max pt-12 pb-8">
-        <div className="flex flex-row-reverse items-start justify-center w-5/6 mb-8 flex-1 flex-wrap">
-          <div className="w-max flex flex-row flex-wrap justify-center">
-            <div className="mr-8 bg-slate-200 p-4">
+    <div className="h-screen w-screen flex justify-center items-center ">
+      <div className="flex flex-col justify-evenly items-center bg-slate-100 outline-gray-200 outline outline-1 w-2/3 h-max pt-12 pb-8 ">
+        <div className="flex items-start justify-start w-5/6 mb-8 flex-1 flex-row-reverse max-xl:flex-col">
+          <div className="w-max flex justify-center flex-1 flex-row max-md:flex-col">
+            <div className="mr-8 flex-1 bg-slate-200 outline-gray-300 outline outline-1 p-4">
               <div className="">
                 <p className="font-bold mr-2">Decimal:</p>
                 <p>{value}</p>
@@ -214,7 +209,7 @@ function App() {
                 <p className="">{getBinaryRep(signBit, exponentBits, fracBits)}</p>
               </div>
             </div>
-            <div className="bg-slate-200 p-4">
+            <div className="w-max bg-slate-200 p-4 outline-gray-300 outline outline-1">
               <div className="flex">
                 <p className="font-bold mr-2">Exp:</p>
                 <p className="">{computeExp(exponentBits)}</p>
@@ -233,18 +228,18 @@ function App() {
               </div>
             </div>
           </div>
-          <div className="min-w-min select-none bg-slate-200 p-4 mr-8 h-32 flex flex-col justify-evenly">
-            <div className="flex">
+          <div className="min-w-min select-none bg-slate-200 outline-gray-300 outline outline-1 p-4 mr-8 h-32 flex flex-col justify-evenly">
+            <div className="flex justify-between">
               <p className="font-bold">Exponent Bits</p>
               <NumInput value={exponentBits.length} onChange={setExp} min={1} max={11}></NumInput>
             </div>
-            <div className="flex">
+            <div className="flex justify-between">
               <p className="font-bold">Frac Bits</p>
               <NumInput value={fracBits.length} onChange={setFrac} min={1} max={52}></NumInput>
             </div>
           </div>
         </div>
-        <div className="w-5/6 p-4 bg-slate-200 flex justify-center items-center flex-wrap select-none">
+        <div className="w-5/6 p-4 bg-slate-200 outline-gray-300 outline outline-1 flex justify-center items-center flex-wrap select-none">
           <div className="w-max h-12 bg-yellow-300 px-2 m-1">
             <div>
               <p className="text-center">Sign</p>
