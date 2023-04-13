@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react"
 import { useEffect } from "react";
-import { NumInput } from "./NumInput";
+import NumInput from "./NumInput";
 
 const initialFormat = {
   exp: 8,
