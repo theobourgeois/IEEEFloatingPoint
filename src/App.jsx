@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react"
+import React, { useState } from "react"
 import { useEffect } from "react";
 import NumInput from "./NumInput";
 
@@ -94,16 +94,16 @@ function getBinaryRep(signBit, exponentBits, fracBits) {
   return result;
 }
 
-function getEfromExp(exp) {
-  for (let i = 0; i < exp.length; i++) {
-    if (exp[i] === 1)
-      return exp.length - i - 1;
-  }
-}
+// function getEfromExp(exp) {
+//   for (let i = 0; i < exp.length; i++) {
+//     if (exp[i] === 1)
+//       return exp.length - i - 1;
+//   }
+// }
 
 function getE(exponentBits) {
   const exp = computeExp(exponentBits);
-  const denorm = exp == 0;
+  const denorm = exp === 0;
   const bias = getBias(exponentBits);
   if(denorm)
     return 1 - bias;
@@ -111,7 +111,7 @@ function getE(exponentBits) {
 }
 
 function getM(fracBits, exponentBits) {
-  const denorm = computeExp(exponentBits) == 0 ? 0 : 1;
+  const denorm = computeExp(exponentBits) === 0 ? 0 : 1;
   const frac = computeFrac(fracBits);
   return denorm + frac;
 }
