@@ -183,8 +183,8 @@ function App() {
 
   return (
     <div className="h-screen w-screen flex justify-center items-center select-none">
-      <div className="flex flex-col justify-center items-center bg-slate-100 w-2/3 h-1/2">
-        <div className="flex flex-row-reverse items-center justify-around w-5/6 mb-8">
+      <div className="flex flex-col justify-evenly items-center bg-slate-100 w-2/3 h-max pt-12 pb-8">
+        <div className="flex flex-row-reverse items-center justify-between w-5/6 mb-8 flex-1">
           <div className="w-max">
             <div className="">
               <p className="font-bold mr-2">Decimal:</p>
@@ -195,19 +195,19 @@ function App() {
               <p className="">{getBinaryRep(signBit, exponentBits, fracBits)}</p>
             </div>
           </div>
-          <div className="">
+          <div className="min-w-min max-h-min">
             <div>
-              <p>Exponent Bits</p>
-              <NumInput value={exponentBits.length} onChange={setExp} min={1} max={43}></NumInput>
+              <p className="font-bold">Exponent Bits</p>
+              <NumInput value={exponentBits.length} onChange={setExp} min={1} max={11}></NumInput>
             </div>
             <div>
-              <p>Frac Bits</p>
-              <NumInput value={fracBits.length} onChange={setFrac} min={1} max={50}></NumInput>
+              <p className="font-bold">Frac Bits</p>
+              <NumInput value={fracBits.length} onChange={setFrac} min={1} max={52}></NumInput>
             </div>
 
           </div>
         </div>
-        <div className="w-5/6 h-8 flex justify-center items-center flex-wrap">
+        <div className="w-5/6 p-4 bg-slate-300 flex justify-center items-center flex-wrap">
           <div className="w-max h-12 bg-yellow-300 px-2 m-1">
             <div>
               <p className="text-center">Sign</p>
