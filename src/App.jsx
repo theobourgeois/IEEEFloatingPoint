@@ -33,9 +33,13 @@ function isAllOnes(bitStr) {
   return true;
 }
 
+function getBias(exponentBits) {
+  return Math.pow(2, exponentBits.length - 1) - 1;
+}
+
 function computeFloatingPoint(signBit, exponentBits, fracBits) {
   let denorm = false;
-  const bias = Math.pow(2, exponentBits.length - 1) - 1;
+  const bias = getBias(exponentBits);
   const exp = computeExp(exponentBits);
 
   let E = exp - bias;
@@ -90,13 +94,27 @@ function getBinaryRep(signBit, exponentBits, fracBits) {
   return result;
 }
 
-// function getEfromExp(exp) {
-//   for (let i = 0; i < exp.length; i++) {
-//     if (exp[i] === 1)
-//       return exp.length - i - 1;
-//   }
-// }
+function getEfromExp(exp) {
+  for (let i = 0; i < exp.length; i++) {
+    if (exp[i] === 1)
+      return exp.length - i - 1;
+  }
+}
 
+function getE(exponentBits) {
+  const exp = computeExp(exponentBits);
+  const denorm = exp == 0;
+  const bias = getBias(exponentBits);
+  if(denorm)
+    return 1 - bias;
+  return exp - bias;
+}
+
+function getM(fracBits, exponentBits) {
+  const denorm = computeExp(exponentBits) == 0 ? 0 : 1;
+  const frac = computeFrac(fracBits);
+  return denorm + frac;
+}
 
 function App() {
 
@@ -182,32 +200,51 @@ function App() {
   }, [value])
 
   return (
-    <div className="h-screen w-screen flex justify-center items-center select-none">
+    <div className="h-screen w-screen flex justify-center items-center">
       <div className="flex flex-col justify-evenly items-center bg-slate-100 w-2/3 h-max pt-12 pb-8">
-        <div className="flex flex-row-reverse items-center justify-between w-5/6 mb-8 flex-1">
-          <div className="w-max">
-            <div className="">
-              <p className="font-bold mr-2">Decimal:</p>
-              <p>{value}</p>
+        <div className="flex flex-row-reverse items-start justify-center w-5/6 mb-8 flex-1 flex-wrap">
+          <div className="w-max flex flex-row flex-wrap justify-center">
+            <div className="mr-8 bg-slate-200 p-4">
+              <div className="">
+                <p className="font-bold mr-2">Decimal:</p>
+                <p>{value}</p>
+              </div>
+              <div className="">
+                <p className="font-bold mr-2">Binary Representation:</p>
+                <p className="">{getBinaryRep(signBit, exponentBits, fracBits)}</p>
+              </div>
             </div>
-            <div className="">
-              <p className="font-bold mr-2">Binary Representation:</p>
-              <p className="">{getBinaryRep(signBit, exponentBits, fracBits)}</p>
+            <div className="bg-slate-200 p-4">
+              <div className="flex">
+                <p className="font-bold mr-2">Exp:</p>
+                <p className="">{computeExp(exponentBits)}</p>
+              </div>
+              <div className="flex">
+                <p className="font-bold mr-2">Bias:</p>
+                <p className="">{getBias(exponentBits)}</p>
+              </div>
+              <div className="flex">
+                <p className="font-bold mr-2">E:</p>
+                <p className="">{getE(exponentBits)}</p>
+              </div>
+              <div className="flex">
+                <p className="font-bold mr-2">M:</p>
+                <p className="">{getM(fracBits, exponentBits)}</p>
+              </div>
             </div>
           </div>
-          <div className="min-w-min max-h-min">
-            <div>
+          <div className="min-w-min select-none bg-slate-200 p-4 mr-8 h-32 flex flex-col justify-evenly">
+            <div className="flex">
               <p className="font-bold">Exponent Bits</p>
               <NumInput value={exponentBits.length} onChange={setExp} min={1} max={11}></NumInput>
             </div>
-            <div>
+            <div className="flex">
               <p className="font-bold">Frac Bits</p>
               <NumInput value={fracBits.length} onChange={setFrac} min={1} max={52}></NumInput>
             </div>
-
           </div>
         </div>
-        <div className="w-5/6 p-4 bg-slate-300 flex justify-center items-center flex-wrap">
+        <div className="w-5/6 p-4 bg-slate-200 flex justify-center items-center flex-wrap select-none">
           <div className="w-max h-12 bg-yellow-300 px-2 m-1">
             <div>
               <p className="text-center">Sign</p>
