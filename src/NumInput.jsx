@@ -1,6 +1,6 @@
 import React from "react";
 
-export function NumInput({value, onChange, min=null, max=null, step=1}) {
+export default function NumInput({value, onChange, min=null, max=null, step=1}) {
     function increment() {
         if(max == null) 
             return onChange(value + step)
@@ -39,4 +39,3 @@ export function NumInput({value, onChange, min=null, max=null, step=1}) {
     )
 }
 
-export default {NumInput}

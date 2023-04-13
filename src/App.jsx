@@ -90,12 +90,12 @@ function getBinaryRep(signBit, exponentBits, fracBits) {
   return result;
 }
 
-function getEfromExp(exp) {
-  for (let i = 0; i < exp.length; i++) {
-    if (exp[i] === 1)
-      return exp.length - i - 1;
-  }
-}
+// function getEfromExp(exp) {
+//   for (let i = 0; i < exp.length; i++) {
+//     if (exp[i] === 1)
+//       return exp.length - i - 1;
+//   }
+// }
 
 
 function App() {
