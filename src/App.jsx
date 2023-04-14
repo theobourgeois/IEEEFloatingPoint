@@ -49,7 +49,6 @@ function computeFloatingPoint(signBit, exponentBits, fracBits) {
     denorm = true;
   }
 
-  //console.log(exponentBits)
   const frac = computeFrac(fracBits);
   if (isAllOnes(exponentBits)) {
 
@@ -96,7 +95,6 @@ function getBinaryRep(signBit, exponentBits, fracBits) {
 }
 
 function getEfromExp(exp) {
-  console.log(exp)
   for (let i = 0; i < exp.length; i++) {
     if (parseInt(exp[i]) === 1)
       return exp.length - i - 1;
@@ -126,7 +124,19 @@ function App() {
   const [value, setValue] = useState(computeFloatingPoint(signBit, exponentBits, fracBits));
 
   function getBinaryRepFromDecialRep(value, exponentBits, fracBits) {
-    const sign = !(value - value === 0);
+    if(value === Infinity || value === -Infinity) {
+      setExponentBits([...Array(exponentBits.length).fill(1)]);
+      setFracBits([...fracBits]); 
+      return;
+    }
+
+    if(value === 0 || isNaN(value)) {
+      setExponentBits([...exponentBits]); 
+      setFracBits([...fracBits]); 
+      return;
+    }
+    const sign = Math.sign(value) === -1 ? 1 : 0;
+    
     const intPart = Math.abs(parseInt(value));
     const fracPart = Math.abs(value) - intPart;
 
@@ -148,7 +158,6 @@ function App() {
     }
 
     fracArr = fracArr.map((char) => parseInt(char, 2));
-
     setExponentBits([...expArr])
     setFracBits([...fracArr])
     setSignBit(sign)
