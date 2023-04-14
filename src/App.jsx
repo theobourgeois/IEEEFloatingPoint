@@ -1,6 +1,7 @@
-import React, { useState } from "react"
+import React, { useState, useRef } from "react"
 import { useEffect } from "react";
 import NumInput from "./NumInput";
+import ClickAwayListener from 'react-click-away-listener';
 
 const initialFormat = {
   exp: 8,
@@ -94,12 +95,13 @@ function getBinaryRep(signBit, exponentBits, fracBits) {
   return result;
 }
 
-// function getEfromExp(exp) {
-//   for (let i = 0; i < exp.length; i++) {
-//     if (exp[i] === 1)
-//       return exp.length - i - 1;
-//   }
-// }
+function getEfromExp(exp) {
+  console.log(exp)
+  for (let i = 0; i < exp.length; i++) {
+    if (parseInt(exp[i]) === 1)
+      return exp.length - i - 1;
+  }
+}
 
 function getE(exponentBits) {
   const exp = computeExp(exponentBits);
@@ -123,49 +125,37 @@ function App() {
   const [signBit, setSignBit] = useState(0);
   const [value, setValue] = useState(computeFloatingPoint(signBit, exponentBits, fracBits));
 
-  // function getBinaryRepFromDecialRep(value) {
-  //   const sign = !(value - value === 0);
-  //   const intPart = Math.abs(parseInt(value));
-  //   const fracPart = Math.abs(value) - intPart;
+  function getBinaryRepFromDecialRep(value) {
+    const sign = !(value - value === 0);
+    const intPart = Math.abs(parseInt(value));
+    const fracPart = Math.abs(value) - intPart;
 
-  //   const bias = Math.pow(2, exponentBits.length - 1) - 1;
-  //   const binFracPart = fracPart.toString(2);
-  //   const binExpPart = (getEfromExp(intPart.toString(2).split("")) + bias).toString(2);
+    const bias = Math.pow(2, exponentBits.length - 1) - 1;
+    const binFracPart = fracPart.toString(2);
+    const binExpPart = (getEfromExp(intPart.toString(2).split("")) + bias).toString(2);
 
-  //   const expArr = binExpPart.split("").map((char) => parseInt(char, 2));
+    const expArr = binExpPart.split("").map((char) => parseInt(char, 2));
+   
 
-  //   let fracArr = binFracPart.split("").slice(2)
-  //   fracArr = intPart.toString(2).split("").slice(1).concat(fracArr)
+    let fracArr = binFracPart.split("").slice(2)
+    fracArr = intPart.toString(2).split("").slice(1).concat(fracArr)
 
-  //   if (fracArr.length > fracBits.length) {
-  //     fracArr.splice(fracBits.length);
-  //   } else if (fracArr.length < fracBits.length) {
-  //     const numFillChars = fracBits.length - fracArr.length;
-  //     const fillArray = new Array(numFillChars).fill("0");
-  //     fracArr = fracArr.concat(fillArray);
-  //   }
+    if (fracArr.length > fracBits.length) {
+      fracArr.splice(fracBits.length);
+    } else if (fracArr.length < fracBits.length) {
+      const numFillChars = fracBits.length - fracArr.length;
+      const fillArray = new Array(numFillChars).fill("0");
+      fracArr = fracArr.concat(fillArray);
+    }
 
-  //   fracArr = fracArr.map((char) => parseInt(char, 2));
+    fracArr = fracArr.map((char) => parseInt(char, 2));
 
+    setExponentBits([...expArr])
+    setFracBits([...fracArr])
+    setSignBit(sign)
 
-  //   console.log(getEfromExp(intPart.toString(2).split("")) + bias)
+  }
 
-  //   setExponentBits([...expArr])
-  //   setFracBits([...fracArr])
-  //   setSignBit(sign)
-
-  // }
-
-  //const [decimalInput, setDecimalInput] = useState(0)
-
-  // function handleDecimalInput(e) {
-  //   const value = parseFloat(e.target.value);
-  //   if (isNaN(value))
-  //     return;
-    
-  //   setDecimalInput(value)
-  //   getBinaryRepFromDecialRep(value)
-  // }
 
 
   function setExp(size) {
@@ -189,11 +179,45 @@ function App() {
   }
 
   useEffect(() => {
-    setValue(computeFloatingPoint(signBit, exponentBits, fracBits))
+    const newValue = computeFloatingPoint(signBit, exponentBits, fracBits)
+    setValue(newValue);
+    decimalRef.current.value = newValue;
   }, [exponentBits, fracBits, signBit])
 
-  
+  const [editingDecimal, setEditingDecimal] = useState(false);
+  const decimalRef = useRef(null);
 
+  function finishEditingDecimal() {
+    if(!editingDecimal)
+      return;
+    
+    const value = parseFloat(decimalRef.current.value);
+    if(isNaN(value)) {
+      setEditingDecimal(false);
+      return;
+    }
+
+    getBinaryRepFromDecialRep(value);
+    setEditingDecimal(false);
+  }
+  
+  function toggleEditingDecimal(e) {
+    e.stopPropagation();
+    setEditingDecimal(true);
+
+    
+  }
+  useEffect(()=>{
+    if(editingDecimal)
+      decimalRef.current.focus();
+  }, [editingDecimal])
+
+  function handleDecimalEnter(e) {
+    if(e.keyCode === 13) {
+      finishEditingDecimal();
+    }
+  }
+ 
   return (
     <div className="h-screen w-screen flex justify-center items-center ">
       <div className="flex flex-col justify-evenly items-center bg-slate-100 outline-gray-200 outline outline-1 w-2/3 h-max pt-12 pb-8 ">
@@ -202,11 +226,14 @@ function App() {
             <div className="mr-8 h-40 w-24 flex-1 bg-slate-200 outline-gray-300 outline outline-1 p-4">
               <div className="">
                 <p className="font-bold mr-2">Decimal:</p>
-                <p>{value}</p>
+                <ClickAwayListener onClickAway={finishEditingDecimal}>
+                    <input onKeyDown={handleDecimalEnter} ref={decimalRef} style={{display: editingDecimal ? "block" : "none"}}  type="text"></input>
+                </ClickAwayListener>
+                <p style={{display: editingDecimal ? "none" : "block"}} onClick={toggleEditingDecimal} className="rounded-sm translate-x-[-4px] px-1 hover:bg-slate-300">{value}</p>
               </div>
               <div className="">
                 <p className="font-bold mr-2">Binary Representation:</p>
-                <p className="break-words whitespace-normal">{getBinaryRep(signBit, exponentBits, fracBits)}</p>
+                <p className="break-words whitespace-normal rounded-sm">{getBinaryRep(signBit, exponentBits, fracBits)}</p>
               </div>
             </div>
             <div className="w-max bg-slate-200 p-4 outline-gray-300 outline outline-1">
@@ -240,7 +267,7 @@ function App() {
           </div>
         </div>
         <div className="w-5/6 p-4 h-48 bg-slate-200 outline-gray-300 outline outline-1 flex justify-center items-center flex-wrap select-none">
-          <div className="w-max h-12 bg-yellow-300 px-2 m-1">
+          <div className="w-max h-12 bg-yellow-300 outline-yellow-400 outline outline-1 px-2 m-1">
             <div>
               <p className="text-center">Sign</p>
               <div className="flex justify-center">
@@ -248,7 +275,7 @@ function App() {
               </div>
             </div>
           </div>
-          <div className="w-max h-12 bg-blue-300 px-2 m-1">
+          <div className="w-max h-12 bg-blue-300 outline-blue-400 outline outline-1 px-2 m-1">
             <div>
               <p className="text-center">Exponent</p>
               <div className="flex justify-center flex-wrap">
@@ -263,7 +290,7 @@ function App() {
             </div>
           </div>
 
-          <div className="w-max h-12 bg-red-300 px-2 m-1">
+          <div className="w-max h-12 bg-red-300 outline-red-400 outline outline-1 px-2 m-1">
             <div >
               <p className="text-center">Frac</p>
               <div className="flex justify-center flex-wrap">
