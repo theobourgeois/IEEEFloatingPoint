@@ -125,7 +125,7 @@ function App() {
   const [signBit, setSignBit] = useState(0);
   const [value, setValue] = useState(computeFloatingPoint(signBit, exponentBits, fracBits));
 
-  function getBinaryRepFromDecialRep(value) {
+  function getBinaryRepFromDecialRep(value, exponentBits, fracBits) {
     const sign = !(value - value === 0);
     const intPart = Math.abs(parseInt(value));
     const fracPart = Math.abs(value) - intPart;
@@ -135,7 +135,6 @@ function App() {
     const binExpPart = (getEfromExp(intPart.toString(2).split("")) + bias).toString(2);
 
     const expArr = binExpPart.split("").map((char) => parseInt(char, 2));
-   
 
     let fracArr = binFracPart.split("").slice(2)
     fracArr = intPart.toString(2).split("").slice(1).concat(fracArr)
@@ -156,14 +155,14 @@ function App() {
 
   }
 
-
-
   function setExp(size) {
-    setExponentBits([...getResizedArr(exponentBits, size)])
+    const newExponentBits = getResizedArr(exponentBits, size);
+    getBinaryRepFromDecialRep(value, newExponentBits, fracBits);
   }
 
   function setFrac(size) {
-    setFracBits([...getResizedArr(fracBits, size)])
+    const newFracBits = getResizedArr(fracBits, size)
+    getBinaryRepFromDecialRep(value, exponentBits, newFracBits);
   }
 
   function setExpBit(index, val) {
@@ -197,7 +196,7 @@ function App() {
       return;
     }
 
-    getBinaryRepFromDecialRep(value);
+    getBinaryRepFromDecialRep(value, exponentBits, fracBits);
     setEditingDecimal(false);
   }
   
